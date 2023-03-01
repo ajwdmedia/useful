@@ -1,6 +1,6 @@
 {
-	"name": "useful",
-	"version": "0.0.1",
+	"name": "@ajwdmedia/useful",
+	"version": "0.1.0",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run package",
