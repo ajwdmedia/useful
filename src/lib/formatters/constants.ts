@@ -28,7 +28,25 @@ export const DATE_FORMAT_COMPONENTS = {
     MILLISECOND_TRIAD: "millisecond_triad"
 } as const;
 
-export type DateFormatComponents = ObjectValues<typeof DATE_FORMAT_COMPONENTS>;
+type DateFormatComponentType = typeof DATE_FORMAT_COMPONENTS
+export type DateFormatComponents = ObjectValues<DateFormatComponentType>;
+
+type DisallowedFormatComponents = DateFormatComponentType[
+    "WEEKDAY_LONG" |
+    "WEEKDAY_SHORT" |
+    "WEEKDAY_SINGLE" |
+    "WEEKDAY_SINGLE_UNIQUE" |
+    "MONTH_LONG" |
+    "MONTH_SHORT" |
+    "MONTH_SINGLE" |
+    "MONTH_NUMERIC" |
+    "MONTH_DUAL" |
+    "HOUR_PERIOD_NUMERIC" |
+    "HOUR_PERIOD_DUAL" |
+    "HOUR_PERIOD_EXTENSION"
+];
+
+export type DateDifferenceFormatComponents = Exclude<DateFormatComponents, DisallowedFormatComponents>;
 
 export const months = [
     "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"

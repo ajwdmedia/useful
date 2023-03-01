@@ -1,46 +1,9 @@
-import type {DateFormatComponents} from "./constants";
-import {DATE_FORMAT_COMPONENTS, months, weekdays, weekdays_singles_unique} from "./constants";
-
-const calculateDateExt = (day: number) => {
-    if (day > 10 && day < 20) return "th";
-    switch (day % 10) {
-        case 1: return "st";
-        case 2: return "nd";
-        case 3: return "rd";
-        default: return "th";
-    }
-}
-
-const formatHelpers: Record<DateFormatComponents, (date: Date) => string> = {
-    [ DATE_FORMAT_COMPONENTS.YEAR_NUMERIC ]: (date) => date.getFullYear().toString(),
-    [ DATE_FORMAT_COMPONENTS.YEAR_DUAL ]: (date) => date.getFullYear().toString().slice(-2),
-    [ DATE_FORMAT_COMPONENTS.MONTH_LONG ]: (date) => months[date.getMonth()],
-    [ DATE_FORMAT_COMPONENTS.MONTH_SHORT ]: (date) => months[date.getMonth()].slice(0, 3),
-    [ DATE_FORMAT_COMPONENTS.MONTH_SINGLE ]: (date) => months[date.getMonth()].slice(0, 1),
-    [ DATE_FORMAT_COMPONENTS.MONTH_NUMERIC ]: (date) => (date.getMonth() + 1).toString(),
-    [ DATE_FORMAT_COMPONENTS.MONTH_DUAL ]: (date) => (date.getMonth() + 1).toString().padStart(2, "0"),
-    [ DATE_FORMAT_COMPONENTS.DAY_NUMERIC ]: (date) => date.getDate().toString(),
-    [ DATE_FORMAT_COMPONENTS.DAY_DUAL ]: (date) => date.getDate().toString().padStart(2, "0"),
-    [ DATE_FORMAT_COMPONENTS.DAY_EXTENSION ]: (date) => calculateDateExt(date.getDate()),
-    [ DATE_FORMAT_COMPONENTS.HOUR_NUMERIC ]: (date) => date.getHours().toString(),
-    [ DATE_FORMAT_COMPONENTS.HOUR_DUAL ]: (date) => date.getHours().toString().padStart(2, "0"),
-    [ DATE_FORMAT_COMPONENTS.HOUR_PERIOD_NUMERIC ]: (date) => ((date.getHours() % 12) || 12).toString(),
-    [ DATE_FORMAT_COMPONENTS.HOUR_PERIOD_DUAL ]: (date) => ((date.getHours() % 12) || 12).toString().padStart(2, "0"),
-    [ DATE_FORMAT_COMPONENTS.HOUR_PERIOD_EXTENSION ]: (date) => date.getHours() < 12 ? "AM" : "PM",
-    [ DATE_FORMAT_COMPONENTS.MINUTE_NUMERIC ]: (date) => date.getMinutes().toString(),
-    [ DATE_FORMAT_COMPONENTS.MINUTE_DUAL ]: (date) => date.getMinutes().toString().padStart(2, "0"),
-    [ DATE_FORMAT_COMPONENTS.SECOND_NUMERIC ]: (date) => date.getSeconds().toString(),
-    [ DATE_FORMAT_COMPONENTS.SECOND_DUAL ]: (date) => date.getSeconds().toString().padStart(2, "0"),
-    [ DATE_FORMAT_COMPONENTS.MILLISECOND_NUMERIC ]: (date) => date.getMilliseconds().toString(),
-    [ DATE_FORMAT_COMPONENTS.MILLISECOND_TRIAD ]: (date) => date.getMilliseconds().toString().padStart(3, "0"),
-    [ DATE_FORMAT_COMPONENTS.WEEKDAY_LONG ]: (date) => weekdays[date.getDay()],
-    [ DATE_FORMAT_COMPONENTS.WEEKDAY_SHORT ]: (date) => weekdays[date.getDay()].slice(0, 3),
-    [ DATE_FORMAT_COMPONENTS.WEEKDAY_SINGLE ]: (date) => weekdays[date.getDay()].slice(0, 1),
-    [ DATE_FORMAT_COMPONENTS.WEEKDAY_SINGLE_UNIQUE ]: (date) => weekdays_singles_unique[date.getDay()],
-};
+import type {DateDifferenceFormatComponents, DateFormatComponents} from "./constants";
+import {formatHelpers, formatHelpersUTC, formatDifferences, makeFakeDateFromDifference, type FakeDate} from "./dateHelpers";
 
 /**
- *
+ * Format the specified Date in the local timezone, using the provided template string.
+ * Use the % character in the template string, then provide a list of Date formatting types. They will be substituted in the order that they are provided. Non-% characters will be left as is.
  */
 export const formatDate = (date: Date, text: string, ...components: DateFormatComponents[]) => {
     const work = text.split("");
@@ -55,16 +18,56 @@ export const formatDate = (date: Date, text: string, ...components: DateFormatCo
 };
 
 /**
- *
+ * Format the specified Date in UTC using the provided template string.
+ * Use the % character in the template string, then provide a list of Date formatting types. They will be substituted in the order that they are provided. Non-% characters will be left as is.
  */
-export const formatDateDifference = (difference_ms: number, text: string, ...components: DateFormatComponents[]) => {
-
+export const formatUTCDate = (date: Date, text: string, ...components: DateFormatComponents[]) => {
+    const work = text.split("");
+    let j = 0;
+    for (let i = 0; i < work.length; i ++) {
+        if (work[i] !== "%") continue;
+        if (components.length <= j) continue;
+        work[i] = formatUTCDateComponent(date, components[j]);
+        j++;
+    }
+    return work.join("");
 };
 
 /**
- *
+ * Format the specified millisecond difference using the provided template string.
+ * Use the % character in the template string, then provide a list of Date formatting types. They will be substituted in the order that they are provided. Non-% characters will be left as is.
+ * Note: Months, Hour Periods (12 Hour Time), and Weekdays are not supported by this method.
+ */
+export const formatDateDifference = (difference_ms: number, text: string, ...components: DateDifferenceFormatComponents[]) => {
+    const work = text.split("");
+    let date = makeFakeDateFromDifference(difference_ms);
+    let j = 0;
+    for (let i = 0; i < work.length; i ++) {
+        if (work[i] !== "%") continue;
+        if (components.length <= j) continue;
+        work[i] = formatDifferenceComponent(date, components[j]);
+        j++;
+    }
+    return work.join("");
+};
+
+/**
+ * Format one component of the specified date in the local timezone.
  */
 export const formatDateComponent = (date: Date, component: DateFormatComponents) => {
     if (!(component in formatHelpers)) return "";
     return formatHelpers[component](date);
+}
+
+/**
+ * Format one component of the specified date in UTC.
+ */
+export const formatUTCDateComponent = (date: Date, component: DateFormatComponents) => {
+    if (!(component in formatHelpersUTC)) return "";
+    return formatHelpersUTC[component](date);
+}
+
+export const formatDifferenceComponent = (date: FakeDate, component: DateDifferenceFormatComponents) => {
+    if (!(component in formatDifferences)) return "";
+    return formatDifferences[component](date);
 }

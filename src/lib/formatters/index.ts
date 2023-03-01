@@ -1,1 +1,1 @@
-export { formatDate, formatDateDifference, formatDateComponent } from "./dates";
+export { formatDate, formatDateDifference, formatDateComponent, formatUTCDateComponent, formatUTCDate } from "./dates";
