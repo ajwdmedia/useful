@@ -6,7 +6,9 @@ This package is designed to work with SvelteKit, and contains many subpackages.
 
  - Copy
  - Formatters
- - - Dates
+   - Dates
+ - Stores
+   - Value Accessible Stores
 
 
 ### Copy
