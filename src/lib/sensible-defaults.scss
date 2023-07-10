@@ -114,3 +114,18 @@ a {
         padding-right: 5vw;
     }
 }
+
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    appearance: none;
+    overflow-x: visible;
+    width: 8px;
+    height: 8px;
+}
+
+div::-webkit-scrollbar-thumb {
+    background: #aaaaaa;
+    border-radius: 4px;
+    width: 8px;
+    height: 8px;
+}
