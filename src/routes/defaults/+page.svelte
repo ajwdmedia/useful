@@ -2,6 +2,8 @@
     import SensibleDefaults from "$lib/SensibleDefaults.svelte";
 
 </script>
-<SensibleDefaults>
-    <div class="item">Green</div>
-</SensibleDefaults>
+<SensibleDefaults />
+
+<div class="item">Green</div>
+
+<a href="/">Back</a>
