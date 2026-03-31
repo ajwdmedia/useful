@@ -7,6 +7,7 @@ declare global {
 		// interface PageData {}
 		// interface Platform {}
 	}
+	export type ObjectValues<T> = T[keyof T];
 }
 
 export {};
