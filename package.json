@@ -7,6 +7,10 @@
 		"package": "svelte-kit sync && svelte-package",
 		"prepublishOnly": "npm run package"
 	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ajwdmedia/useful"
+	},
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
