@@ -32,7 +32,6 @@ Either directly attach `{@attach autosubmit(callback: () => any)}` or spread `{ 
 
 ### Modal
 Not the best modal provider in the world but I have found it to be versatile and good enough and as long as you aren't doing a lot of `position: ...` work then it should be fine.  
-**Relies on Tailwind 4 for styles.**  
 ```svelte
 <Modal>
     {@snippet trigger(open)}

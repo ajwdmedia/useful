@@ -22,7 +22,21 @@
     {@render trigger(() => open = true)}
 {/if}
 {#if open}
-    <div transition:fade={{ duration: 150 }} class="absolute z-2 inset-0 bg-black/60 grid place-items-center backdrop-blur-sm" onclick={(e) => { if (e.target === e.currentTarget && !lock) open = false }}>
+    <div transition:fade={{ duration: 150 }} class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget && !lock) open = false }}>
         {@render children?.(() => open = false, modalScale)}
     </div>
 {/if}
+
+<style>
+
+    .modal-backdrop {
+        position: fixed;
+        z-index: 2;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: grid;
+        place-items: center;
+        backdrop-filter: blur(8px);
+    }
+
+</style>
